@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/topup_request.dart';
 import '../../services/session.dart';
 import '../../services/topup_service.dart';
@@ -19,7 +20,7 @@ class _TopupScreenState extends State<TopupScreen> {
 
     if (amount == null || amount <= 0) return;
 
-    TopupService.createRequest(
+    context.read<TopupService>().createRequest(
       TopupRequest(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         driverEmail: Session.email ?? "",
@@ -40,7 +41,7 @@ class _TopupScreenState extends State<TopupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myRequests = TopupService.byDriver(Session.email ?? "");
+    final myRequests = context.read<TopupService>().byDriver(Session.email ?? "");
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -60,7 +61,7 @@ class _TopupScreenState extends State<TopupScreen> {
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
-          value: method,
+          initialValue: method,
           items: const [
             DropdownMenuItem(value: "بنكك", child: Text("بنكك")),
             DropdownMenuItem(value: "فوري", child: Text("فوري")),

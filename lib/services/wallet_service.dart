@@ -1,13 +1,15 @@
-class WalletService {
-  static final Map<String, double> _balances = {};
-  static final List<Map<String, dynamic>> _transactions = [];
-  static double companyCommissionTotal = 0.0;
+import 'package:flutter/material.dart';
 
-  static double balanceOf(String driverEmail) {
+class WalletService extends ChangeNotifier {
+  final Map<String, double> _balances = {};
+  final List<Map<String, dynamic>> _transactions = [];
+  double companyCommissionTotal = 0.0;
+
+  double balanceOf(String driverEmail) {
     return _balances[driverEmail] ?? 0.0;
   }
 
-  static List<Map<String, dynamic>> transactionsOf(String driverEmail) {
+  List<Map<String, dynamic>> transactionsOf(String driverEmail) {
     return _transactions
         .where((t) => t['driverEmail'] == driverEmail)
         .toList()
@@ -15,7 +17,7 @@ class WalletService {
         .toList();
   }
 
-  static void topUp({
+  void topUp({
     required String driverEmail,
     required double amount,
     required String source,
@@ -30,9 +32,10 @@ class WalletService {
       'source': source,
       'time': DateTime.now(),
     });
+    notifyListeners();
   }
 
-  static void addEarning({
+  void addEarning({
     required String driverEmail,
     required double amount,
     required String orderId,
@@ -47,9 +50,10 @@ class WalletService {
       'orderId': orderId,
       'time': DateTime.now(),
     });
+    notifyListeners();
   }
 
-  static void addCommission({
+  void addCommission({
     required String driverEmail,
     required double amount,
     required String orderId,
@@ -63,9 +67,10 @@ class WalletService {
       'orderId': orderId,
       'time': DateTime.now(),
     });
+    notifyListeners();
   }
 
-  static void withdraw({
+  void withdraw({
     required String driverEmail,
     required double amount,
     required String reason,
@@ -80,5 +85,6 @@ class WalletService {
       'reason': reason,
       'time': DateTime.now(),
     });
+    notifyListeners();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/order_service.dart';
+import '../../models/order_status.dart';
 import '../../services/session.dart';
 import '../../services/wallet_service.dart';
 
@@ -12,7 +14,7 @@ class DriverOrdersScreen extends StatefulWidget {
 
 class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
   void accept(String id) {
-    final ok = OrderService.acceptOrder(id, Session.email ?? "");
+    final ok = context.read<OrderService>().acceptOrder(id, Session.email ?? "");
     if (ok) {
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
@@ -22,7 +24,7 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
   }
 
   void picked(String id) {
-    final ok = OrderService.updateStatusForDriver(
+    final ok = context.read<OrderService>().updateStatusForDriver(
       id,
       Session.email ?? "",
       "picked",
@@ -36,7 +38,7 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
   }
 
   void delivered(String id) {
-    final ok = OrderService.updateStatusForDriver(
+    final ok = context.read<OrderService>().updateStatusForDriver(
       id,
       Session.email ?? "",
       "delivered",
@@ -51,9 +53,9 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myOrders = OrderService.driverOrders(Session.email ?? "");
-    final availableOrders = OrderService.pendingOrders();
-    final balance = WalletService.balanceOf(Session.email ?? "");
+    final myOrders = context.read<OrderService>().driverOrders(Session.email ?? "");
+    final availableOrders = context.read<OrderService>().pendingOrders();
+    final balance = context.read<WalletService>().balanceOf(Session.email ?? "");
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -100,7 +102,7 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
                       const SizedBox(height: 8),
                       Text("النوع: ${order.type}"),
                       Text("السعر: ${order.price}"),
-                      Text("الحالة: ${order.status}"),
+                      Text("الحالة: ${order.status.label}"),
                       const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
@@ -146,10 +148,10 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
                       const SizedBox(height: 8),
                       Text("النوع: ${order.type}"),
                       Text("السعر: ${order.price}"),
-                      Text("الحالة: ${order.status}"),
+                      Text("الحالة: ${order.status.label}"),
                       const SizedBox(height: 12),
 
-                      if (order.status == "accepted")
+                      if (order.status == OrderStatus.accepted)
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -158,7 +160,7 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
                           ),
                         ),
 
-                      if (order.status == "picked")
+                      if (order.status == OrderStatus.picked)
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -167,7 +169,7 @@ class _DriverOrdersScreenState extends State<DriverOrdersScreen> {
                           ),
                         ),
 
-                      if (order.status == "delivered")
+                      if (order.status == OrderStatus.delivered)
                         const Text(
                           "تم التسليم ✔",
                           style: TextStyle(color: Colors.green),

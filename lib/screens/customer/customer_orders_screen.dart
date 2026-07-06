@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/order_service.dart';
 import '../../services/session.dart';
 
@@ -12,7 +13,7 @@ class CustomerOrdersScreen extends StatefulWidget {
 class _CustomerOrdersScreenState extends State<CustomerOrdersScreen> {
   @override
   Widget build(BuildContext context) {
-    final orders = OrderService.customerOrders(Session.email ?? "");
+    final orders = context.read<OrderService>().customerOrders(Session.email ?? "");
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -52,7 +53,7 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen> {
                         Text("السائق: ${order.driverEmail ?? 'لم يتم التعيين بعد'}"),
                         const SizedBox(height: 8),
                         Text(
-                          "الحالة: ${order.status}",
+                          "الحالة: ${order.status.label}",
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],

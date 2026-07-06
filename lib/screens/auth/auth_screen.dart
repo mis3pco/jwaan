@@ -56,6 +56,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         final user = await UserStore.login(email, password);
 
+        if (!mounted) return;
         if (user == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("بيانات الدخول غير صحيحة")),
@@ -96,6 +97,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         final ok = await UserStore.register(user);
 
+        if (!mounted) return;
         if (!ok) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("هذا الإيميل مسجل بالفعل")),
@@ -186,7 +188,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: role,
+                  initialValue: role,
                   decoration: const InputDecoration(
                     labelText: "نوع الحساب",
                     border: OutlineInputBorder(),

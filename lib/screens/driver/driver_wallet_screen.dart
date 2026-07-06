@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/session.dart';
 import '../../services/wallet_service.dart';
 
@@ -13,8 +14,9 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
   @override
   Widget build(BuildContext context) {
     final email = Session.email ?? "";
-    final balance = WalletService.balanceOf(email);
-    final transactions = WalletService.transactionsOf(email);
+    final walletService = context.read<WalletService>();
+    final balance = walletService.balanceOf(email);
+    final transactions = walletService.transactionsOf(email);
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -43,7 +45,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "إجمالي عمولة الشركة: ${WalletService.companyCommissionTotal.toStringAsFixed(2)}",
+                    "إجمالي عمولة الشركة: ${walletService.companyCommissionTotal.toStringAsFixed(2)}",
                   ),
                 ],
               ),

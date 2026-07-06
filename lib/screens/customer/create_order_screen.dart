@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/order.dart';
 import '../../services/order_service.dart';
 import '../../services/session.dart';
@@ -58,7 +59,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       price: price,
     );
 
-    OrderService.addOrder(order);
+    context.read<OrderService>().addOrder(order);
 
     fromController.clear();
     toController.clear();
@@ -74,7 +75,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myOrders = OrderService.ordersForCustomer(Session.email ?? "");
+    final myOrders = context.read<OrderService>().ordersForCustomer(Session.email ?? "");
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -103,7 +104,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: selectedType,
+            initialValue: selectedType,
             decoration: const InputDecoration(
               labelText: "نوع الطلب",
               border: OutlineInputBorder(),
@@ -154,7 +155,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 child: ListTile(
                   title: Text("${order.from} → ${order.to}"),
                   subtitle: Text(
-                    "${order.type} • ${order.price} • ${order.status}",
+                    "${order.type} • ${order.price} • ${order.status.label}",
                   ),
                 ),
               ),
